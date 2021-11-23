@@ -1,0 +1,23 @@
+{
+  "name": "calentask-express",
+  "version": "1.0.0",
+  "description": "node express server for calentask",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "calentask-express"
+  },
+  "author": "marlow collins",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5"
+  }
+}
