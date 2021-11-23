@@ -22,6 +22,21 @@ usersRouter.route('/login')
     res.send('You can login')
 })
 
+usersRouter.route('/login/forgot-password')
+
+.get((req, res) => {
+    res.statusCode = 200;
+    res.send('You forgot your password')
+})
+
+usersRouter.route('/login/forgot-username')
+
+.get((req, res) => {
+    res.statusCode = 200;
+    res.send('You forgot your username')
+})
+
+
 usersRouter.route('/:userId')
 
 .get((req, res) => {
@@ -36,6 +51,14 @@ usersRouter.route('/:userId/dashboard')
     res.statusCode = 200;
     const myUserId = req.params.userId
     res.send(`Hello ${myUserId.toUpperCase()} this is your Dashboard!`)
+})
+
+usersRouter.route('/:userId/settings')
+
+.get((req, res) => {
+    res.statusCode = 200;
+    const myUserId = req.params.userId
+    res.send(`Hello ${myUserId.toUpperCase()} these are your settings!`)
 })
 
 usersRouter.route('/:userId/logout')
