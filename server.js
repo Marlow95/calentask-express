@@ -10,7 +10,6 @@ app.get('/', (req, res) => {
 })
 
 //middleware
-
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(cookieParser())
