@@ -1,11 +1,21 @@
 const express = require('express');
 const usersRouter = express.Router()
+const Users = require('../model/UsersModel')
 
 usersRouter.route('/')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    res.send('Hello User')
+.get((req, res, next) => {
+
+    Users.findAll()
+    .then(users => {
+        res.statusCode = 200;
+        //res.json(users)
+        //res.setHeader('Content-Type', 'application/json')
+        console.log("All users:", JSON.stringify(users, null, 4));
+        res.end()
+    })
+    .catch( err => next(err));
+    res.end()  
 })
 
 usersRouter.route('/signup')

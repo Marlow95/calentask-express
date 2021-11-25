@@ -1,12 +1,23 @@
 const express = require('express');
 const morgan = require('morgan')
-const cors = require('cors')
+const path = require('path')
+const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 const createError = require('http-errors')
+const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
-const pool = require('./db')
+
+//Database
+const sequelize = require('./config/database')
+
+// Test Database
+sequelize.authenticate()
+.then(() => console.log('Connection has been established successfully.'))
+.catch(err => console.log('Unable to connect to the database:' + err ))
 
 const app = express();
+const PORT = process.env.PORT || 3002;
 
 //middleware
 app.use(morgan('dev'))
@@ -15,13 +26,10 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 
-//main route
-app.get('/', (req, res) => {
-    res.statusCode = 200;
-    res.send('Hello this is CalenTask')
-})
+app.use(express.static(__dirname + '/public'));
 
 //routes
+app.use('/', indexRouter)
 app.use('/users', usersRouter)
 
 // catch 404 and forward to error handler
@@ -41,4 +49,4 @@ res.render('error');
 });
   
 //port
-app.listen(3001, () => console.log('Server is ready'))
+app.listen(PORT, () => console.log(`Server is ready on ${PORT}`))
