@@ -4,6 +4,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const createError = require('http-errors')
 const usersRouter = require('./routes/usersRouter');
+const pool = require('./db')
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter)
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     next(createError(404));
 });
   
