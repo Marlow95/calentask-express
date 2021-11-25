@@ -5,6 +5,6 @@ CREATE TABLE Users(
     firstname varchar(40),
     lastname varchar(40),
     username varchar(40),
-    pass_word varchar(40)
+    myPassword varchar(40)
 );
 
