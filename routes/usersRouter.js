@@ -8,14 +8,12 @@ usersRouter.route('/')
 
     Users.findAll()
     .then(users => {
-        res.statusCode = 200;
-        //res.json(users)
-        //res.setHeader('Content-Type', 'application/json')
         console.log("All users:", JSON.stringify(users, null, 4));
-        res.end()
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json')
+        res.json(users)
     })
     .catch( err => next(err));
-    res.end()  
 })
 
 usersRouter.route('/signup')
