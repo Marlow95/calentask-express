@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session')
 const morgan = require('morgan')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -9,7 +10,7 @@ const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
 
 //Database
-const sequelize = require('./config/database')
+const sequelize = require('./config/database');
 
 // Test Database
 sequelize.authenticate()
@@ -19,7 +20,10 @@ sequelize.authenticate()
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-//middleware
+//Middleware
+//app.use(session({
+    //'secret':'kMbr45F6h4gf7kbr5'
+//}))
 app.use(morgan('dev'))
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
@@ -28,7 +32,7 @@ app.use(cors())
 
 app.use(express.static(__dirname + '/public'));
 
-//routes
+//Routes
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 
