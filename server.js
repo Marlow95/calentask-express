@@ -18,7 +18,7 @@ sequelize.authenticate()
 .catch(err => console.log('Unable to connect to the database:' + err ))
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 4000;
 
 //Middleware
 //app.use(session({

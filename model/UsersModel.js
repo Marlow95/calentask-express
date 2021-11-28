@@ -11,30 +11,49 @@ Users.init({
     },
     firstName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notNull: true
+        }
     },
     lastName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notNull: true
+        }
     },
     userName: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.TEXT,
+        allowNull: false,
+        unique: true,
+        validate: {
+            notNull: true,
+        }
     },
     eMail: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
         validate: {
             isEmail: true
         }
     },
     myPassword: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING(64),
+        allowNull: false,
+        validate: {
+            notNull: true,
+            isAlphanumeric: true
+        }
     },
     confirmPassword: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING(64),
+        allowNull: false,
+        validate: {
+            notNull: true,
+            isAlphanumeric: true
+        }
     },
     about: {
         type:Sequelize.TEXT
