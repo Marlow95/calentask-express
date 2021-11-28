@@ -5,7 +5,6 @@ const Users = require('../model/UsersModel')
 usersRouter.route('/')
 
 .get((req, res, next) => {
-
     Users.findAll()
     .then(users => {
         console.log("All users:", JSON.stringify(users, null, 4));
@@ -18,9 +17,21 @@ usersRouter.route('/')
 
 usersRouter.route('/signup')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    res.send('You can sign up')
+.post((req, res, next) => {
+    Users.create({ 
+        firstName: req.body.firstName, 
+        lastName: req.body.lastName, 
+        userName: req.body.userName, 
+        eMail: req.body.eMail,
+        myPassword: req.body.myPassword,
+        confirmPassword: req.body.confirmPassword
+    })
+    .then(users => {
+        res.statusCode = 201;
+        res.setHeader('Content-Type', 'application/json')
+        res.json(users)
+    })
+    .catch(err => next(err))
 })
 
 usersRouter.route('/login')
