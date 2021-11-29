@@ -1,5 +1,7 @@
 const express = require('express');
 const session = require('express-session')
+const redis = require('redis')
+const connectRedis = require('connect-redis')
 const morgan = require('morgan')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -20,10 +22,7 @@ sequelize.authenticate()
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-//Middleware
-//app.use(session({
-    //'secret':'kMbr45F6h4gf7kbr5'
-//}))
+//MiddleWare
 app.use(morgan('dev'))
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
@@ -31,6 +30,33 @@ app.use(cookieParser())
 app.use(cors())
 
 app.use(express.static(__dirname + '/public'));
+
+//Session Store
+const RedisStore = connectRedis(session)
+
+//Configure Redis
+const redisClient = redis.createClient({
+    host: 'localhost',
+    port: 6379
+})
+
+redisClient.on('error', function(err){
+    console.log('Couldn\'t establish a connection with redis.' + err);
+})
+redisClient.on('connect', function(err){
+    console.log('Connected to redis succesfully')
+})
+
+//Session
+app.use(session({
+    store: new RedisStore({ client: redisClient}),
+    secret:'kMbr45F6h4gf7kbr5',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 //one day
+    }
+}))
 
 //Routes
 app.use('/', indexRouter)
