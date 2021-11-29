@@ -9,21 +9,21 @@ Users.init({
         primaryKey: true,
         type: Sequelize.INTEGER
     },
-    firstName: {
+    firstname: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
             notNull: true
         }
     },
-    lastName: {
+    lastname: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
             notNull: true
         }
     },
-    userName: {
+    username: {
         type: Sequelize.TEXT,
         allowNull: false,
         unique: true,
@@ -31,7 +31,7 @@ Users.init({
             notNull: true,
         }
     },
-    eMail: {
+    email: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
@@ -39,7 +39,7 @@ Users.init({
             isEmail: true
         }
     },
-    myPassword: {
+    password: {
         type: Sequelize.STRING(64),
         allowNull: false,
         validate: {
@@ -79,11 +79,11 @@ Users.init({
 Users.sync({ force: true }).then(() => {
 
     return Users.create({
-      firstName: 'Marlow',
-      lastName: 'Collins',
-      userName: 'MarlowC',
-      eMail: 'marlowcollins95@gmail.com',
-      myPassword: 'password',
+      firstname: 'Marlow',
+      lastname: 'Collins',
+      username: 'MarlowC',
+      email: 'marlowcollins95@gmail.com',
+      password: 'password',
       confirmPassword: 'password',
       about: 'I am the founder of CalenTask',
       lastLogin: Date(),

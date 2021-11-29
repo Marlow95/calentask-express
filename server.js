@@ -6,10 +6,12 @@ const morgan = require('morgan')
 const path = require('path')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const passport = require('passport')
 const cors = require('cors')
 const createError = require('http-errors')
 const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
+const passportConfig = require('./passport')
 
 //Database
 const sequelize = require('./config/database');
@@ -41,10 +43,11 @@ const redisClient = redis.createClient({
 })
 
 redisClient.on('error', function(err){
-    console.log('Couldn\'t establish a connection with redis.' + err);
+    console.log('Couldn\'t establish a connection with redis.');
 })
+
 redisClient.on('connect', function(err){
-    console.log('Connected to redis succesfully')
+    console.log('Connected to redis succesfully' + err)
 })
 
 //Session
@@ -54,9 +57,13 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
+        httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 //one day
     }
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 //Routes
 app.use('/', indexRouter)

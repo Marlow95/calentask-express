@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const usersRouter = express.Router()
 const Users = require('../model/UsersModel')
 
@@ -19,11 +20,11 @@ usersRouter.route('/signup')
 
 .post((req, res, next) => {
     Users.create({ 
-        firstName: req.body.firstName, 
-        lastName: req.body.lastName, 
-        userName: req.body.userName, 
-        eMail: req.body.eMail,
-        myPassword: req.body.myPassword,
+        firstname: req.body.firstname, 
+        lastname: req.body.lastname, 
+        username: req.body.username, 
+        email: req.body.email,
+        password: req.body.password,
         confirmPassword: req.body.confirmPassword
     })
     .then(users => {
@@ -36,40 +37,44 @@ usersRouter.route('/signup')
 
 usersRouter.route('/login')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    res.send('You can login')
+.post(passport.authenticate('local'),(req, res) => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json');
+    res.json('You are logged in')
 })
 
-usersRouter.route('/login/forgot-password')
-
-.get((req, res) => {
-    res.statusCode = 200;
-    res.send('You forgot your password')
-})
-
-usersRouter.route('/login/forgot-username')
+usersRouter.route('/login/forgot')
 
 .get((req, res) => {
     res.statusCode = 200;
-    res.send('You forgot your username')
+    res.send('You forgot your username/password')
 })
 
-
+//username page that everyone can see
 usersRouter.route('/:userId')
 
 .get((req, res) => {
     res.statusCode = 200;
     const myUserId = req.params.userId
-    res.send(`Hello ${myUserId.toUpperCase()}`)
+    res.send(`Hello this is the page of ${myUserId.toUpperCase()}`)
 })
 
+//private username page
 usersRouter.route('/:userId/dashboard')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    const myUserId = req.params.userId
-    res.send(`Hello ${myUserId.toUpperCase()} this is your Dashboard!`)
+.get((req, res, next) => {
+    Users.findOne({where: req.body.username})
+    .then(username => {
+        res.statusCode = 200;
+        const myUserId = req.params.userId
+        if(myUserId === username){
+            res.send(`Hello ${myUserId.toUpperCase()} this is your Dashboard!`)
+        } else {
+            const err = new Error('This username doen\'t\ exist')
+            err.statusCode = 404
+            return next(err)
+        }
+    }) .catch(err => next(err))
 })
 
 usersRouter.route('/:userId/settings')
