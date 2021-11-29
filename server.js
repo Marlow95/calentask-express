@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session')
-const redis = require('redis')
+const Redis = require('ioredis')
 const connectRedis = require('connect-redis')
 const morgan = require('morgan')
 const path = require('path')
@@ -8,13 +8,14 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const cors = require('cors')
+const passportConfig = require('./passport')
 const createError = require('http-errors')
 const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
-const passportConfig = require('./passport')
 
 //Database
 const sequelize = require('./config/database');
+
 
 // Test Database
 sequelize.authenticate()
@@ -23,6 +24,7 @@ sequelize.authenticate()
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
 
 //MiddleWare
 app.use(morgan('dev'))
@@ -35,35 +37,29 @@ app.use(express.static(__dirname + '/public'));
 
 //Session Store
 const RedisStore = connectRedis(session)
+const redis = new Redis()
 
-//Configure Redis
-const redisClient = redis.createClient({
-    host: 'localhost',
-    port: 6379
-})
-
-redisClient.on('error', function(err){
-    console.log('Couldn\'t establish a connection with redis.' + err);
-})
-
-redisClient.on('connect', function(err){
-    console.log('Connected to redis succesfully')
-})
 
 //Session
 app.use(session({
-    store: new RedisStore({ client: redisClient}),
+    name: 'sessionId',
+    store: new RedisStore({ 
+        client: redis,
+        disableTouch: true
+    }),
     secret:'kMbr45F6h4gf7kbr5',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: false,
         maxAge: 1000 * 60 * 60 * 24 //one day
     }
 }))
 
 app.use(passport.initialize())
 app.use(passport.session())
+
 
 //Routes
 app.use('/', indexRouter)

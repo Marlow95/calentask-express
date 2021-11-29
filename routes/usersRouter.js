@@ -39,8 +39,8 @@ usersRouter.route('/login')
 
 .post(passport.authenticate('local'),(req, res) => {
     res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json');
-    res.json('You are logged in')
+    res.setHeader('Content-Type','application/json')
+    res.end('You are logged in')
 })
 
 usersRouter.route('/login/forgot')
@@ -60,6 +60,7 @@ usersRouter.route('/:userId')
 })
 
 //private username page
+/*
 usersRouter.route('/:userId/dashboard')
 
 .get((req, res, next) => {
@@ -75,7 +76,7 @@ usersRouter.route('/:userId/dashboard')
             return next(err)
         }
     }) .catch(err => next(err))
-})
+}) */
 
 usersRouter.route('/:userId/settings')
 
