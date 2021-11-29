@@ -43,11 +43,11 @@ const redisClient = redis.createClient({
 })
 
 redisClient.on('error', function(err){
-    console.log('Couldn\'t establish a connection with redis.');
+    console.log('Couldn\'t establish a connection with redis.' + err);
 })
 
 redisClient.on('connect', function(err){
-    console.log('Connected to redis succesfully' + err)
+    console.log('Connected to redis succesfully')
 })
 
 //Session
