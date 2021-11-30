@@ -40,20 +40,18 @@ Users.init({
         }
     },
     password: {
-        type: Sequelize.STRING(64),
+        type: Sequelize.STRING,
         allowNull: false,
         validate: {
             notNull: true,
             isAlphanumeric: true
         }
     },
-    confirmPassword: {
-        type: Sequelize.STRING(64),
-        allowNull: false,
-        validate: {
-            notNull: true,
-            isAlphanumeric: true
-        }
+    hash: {
+        type: Sequelize.STRING
+    },
+    salt: {
+        type: Sequelize.STRING
     },
     about: {
         type:Sequelize.TEXT
@@ -84,7 +82,6 @@ Users.sync({ force: true }).then(() => {
       username: 'MarlowC',
       email: 'marlowcollins95@gmail.com',
       password: 'password',
-      confirmPassword: 'password',
       about: 'I am the founder of CalenTask',
       lastLogin: Date(),
       status: 'active',

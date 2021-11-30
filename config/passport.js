@@ -1,6 +1,24 @@
 const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
 const Users = require('../model/UsersModel')
+const crypto = require('crypto')
+
+//Salt and Hash Functions
+function validPassword(password, hash, salt){
+    const hashVerify = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    return hash === hashVerify
+}
+
+function genPassword(password){
+    const salt = crypto.randomBytes(32).toString('hex');
+    const genHash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    return {
+        salt: salt,
+        has: genHash
+    }
+}
+
+//passport config
 
 passport.serializeUser(async (users, done) => {
     console.log('Serialize')
@@ -22,14 +40,17 @@ passport.use(new LocalStrategy(
     function (username, password, done) {
         Users.findOne({ where: { username: username, password: password } })
             .then(users => {
-                if (!users) {
-                    return done(null, false, { message: 'Incorrect username.' });
-                    }
-                if (!users.password === password) {
-                    return done(null, false, { message: 'Incorrect password.' });
-                    }
+                if(!users || !users.password) {
+                    return done(null, false, { message: 'Incorrect Username' });
+                };
+                //const isValid = validPassword(users.password, users.hash, users.salt)
+                return done(null, users);
+               /* if(isValid) {
                     return done(null, users);
-                }).catch(err => done(err));
+                } else{
+                    return done(null, false, { message: 'Incorrect Password'})
+                }*/
+            }).catch(err => done(err));
         }
     ));
 

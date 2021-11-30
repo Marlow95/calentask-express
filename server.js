@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const cors = require('cors')
+const crypto = require('crypto')
 const passportConfig = require('./config/passport')
 const createError = require('http-errors')
 const indexRouter = require('./routes/indexRouter')
@@ -25,8 +26,8 @@ sequelize.authenticate()
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+//view engine setup
+app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'pug');
 
 
@@ -46,17 +47,17 @@ const redis = new Redis()
 
 //Session
 app.use(session({
-    name: 'sessionId',
+    name: 'userAuthenticated',
     store: new RedisStore({ 
         client: redis,
         disableTouch: true
     }),
-    secret:'kMbr45F6h4gf7kbr5',
+    secret:'hnBrd4GNsdBd4BF4CKWS35dk6f',
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
-        httpOnly: false,
+        httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 //one day
     }
 }))

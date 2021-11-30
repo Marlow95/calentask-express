@@ -24,8 +24,7 @@ usersRouter.route('/signup')
         lastname: req.body.lastname, 
         username: req.body.username, 
         email: req.body.email,
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword
+        password: req.body.password
     })
     .then(users => {
         res.statusCode = 201;
