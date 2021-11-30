@@ -5,7 +5,7 @@ const Users = require('../model/UsersModel')
 
 usersRouter.route('/')
 
-.get((req, res, next) => {
+.get(passport.authenticate('local'),(req, res, next) => {
     Users.findAll()
     .then(users => {
         console.log("All users:", JSON.stringify(users, null, 4));

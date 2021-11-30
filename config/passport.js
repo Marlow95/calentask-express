@@ -1,6 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
-const Users = require('./model/UsersModel')
+const Users = require('../model/UsersModel')
 
 passport.serializeUser(async (users, done) => {
     console.log('Serialize')

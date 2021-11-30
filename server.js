@@ -8,7 +8,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const cors = require('cors')
-const passportConfig = require('./passport')
+const passportConfig = require('./config/passport')
 const createError = require('http-errors')
 const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
@@ -24,6 +24,10 @@ sequelize.authenticate()
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 
 //MiddleWare
