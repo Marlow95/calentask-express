@@ -77,7 +77,7 @@ Users.init({
     },
     instanceMethods:{
         validPassword: async function(password) {
-            return await bcrypt.compare(password, this.password);
+            return bcrypt.compareSync(password, this.password);
         }
     },
     sequelize,

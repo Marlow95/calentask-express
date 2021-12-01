@@ -1,5 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
+const bcrypt = require('bcrypt')
 const Users = require('../model/UsersModel')
 
 //passport config
@@ -24,7 +25,7 @@ passport.use(new LocalStrategy(
     function (username, password, done) {
         Users.findOne({ where: { username: username, password: password } })
             .then(async users => {
-                if(!users || !await users.validPassword(password)) {
+                if(!users || !users.validPassword(password)) {
                     return done(null, false, { message: 'Incorrect Username' });
                 } else{
                     return done(null, users)
