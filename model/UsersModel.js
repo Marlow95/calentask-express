@@ -62,24 +62,28 @@ Users.init({
     lastLogin: {
         type: Sequelize.DATE
     }
-}, { 
+}, {/*
     hooks:{
-        beforeCreate: async function(user) {
+        beforeCreate: async function(users) {
             const salt = await bcrypt.genSalt(10); 
-            user.password = await bcrypt.hash(user.password, salt);
+            users.password = await bcrypt.hash(users.password, salt);
         },
-        beforeUpdate:async (user) => {
-            if(user.password) {
+        beforeUpdate:async (users) => {
+            if(users.password) {
              const salt = await bcrypt.genSaltSync(10, 'a');
-             user.password = bcrypt.hashSync(user.password, salt);
+             users.password = bcrypt.hashSync(users.password, salt);
             }
         }
     },
-    instanceMethods:{
+    validate:{
         validPassword: async function(password) {
+            try{
             return bcrypt.compareSync(password, this.password);
+            } catch(err){
+                err.statusCode = 401
+            }
         }
-    },
+    },*/
     sequelize,
      modelName: 'Users',
      timestamps: true,
@@ -87,9 +91,6 @@ Users.init({
      updatedAt: 'updateTimestamp'
 });
 
-Users.validPassword = async (password, hash) => {
-    return await bcrypt.compareSync(password, hash);
-}
 
 Users.sync({ force: true }).then(() => {
 

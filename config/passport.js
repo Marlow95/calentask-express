@@ -22,11 +22,13 @@ passport.deserializeUser(function (id, done) {
 
 
 passport.use(new LocalStrategy(
-    function (username, password, done) {
+    function(username, password, done) {
         Users.findOne({ where: { username: username, password: password } })
             .then(async users => {
-                if(!users || !users.validPassword(password)) {
+                if(!users) {
                     return done(null, false, { message: 'Incorrect Username' });
+                } else if(!users.password){
+                    return done(null, false, { message: 'Incorrect Password' });
                 } else{
                     return done(null, users)
                 } 
@@ -34,4 +36,4 @@ passport.use(new LocalStrategy(
         }
     )
 );
-
+ 

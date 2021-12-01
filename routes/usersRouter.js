@@ -11,7 +11,7 @@ usersRouter.route('/')
         console.log("All users:", JSON.stringify(users, null, 4));
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json')
-        res.json(users)
+        res.send(users)
     }).catch( err => next(err));
 
 })
@@ -19,7 +19,7 @@ usersRouter.route('/')
 usersRouter.route('/signup')
 
 .post((req, res, next) => {
-    //console.log(req.session)
+    console.log(req.user)
     Users.create({ 
         firstname: req.body.firstname, 
         lastname: req.body.lastname, 
@@ -38,6 +38,7 @@ usersRouter.route('/signup')
 usersRouter.route('/login')
 
 .post(passport.authenticate('local'),(req, res) => {
+    console.log(req.user)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
     res.send(`Hello ${req.body.username}`)
