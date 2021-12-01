@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/database')
+const crypto = require('crypto')
 
 const Model = Sequelize.Model;
 class Users extends Model {}
@@ -45,13 +46,15 @@ Users.init({
         validate: {
             notNull: true,
             isAlphanumeric: true
+        }, get(){
+            return () => this.getDataValue('password')
         }
     },
-    hash: {
-        type: Sequelize.STRING
-    },
     salt: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        get(){
+            return () => this.getDataValue('salt')
+        }
     },
     about: {
         type:Sequelize.TEXT
@@ -74,15 +77,38 @@ Users.init({
      updatedAt: 'updateTimestamp'
 });
 
+
+Users.generateSalt = () => {
+    return crypto.randomBytes(16).toString('base64')
+}
+
+Users.encryptPassword = (plainText, salt) => {
+    return crypto.createHash('RSA-SHA256').update(plainText).update(salt).digest('hex')
+}
+
+const setSaltAndPassword = user => {
+    if (user.changed('password')) {
+        user.salt = Users.generateSalt()
+        user.password = Users.encryptPassword(user.password(), user.salt())
+    }
+}
+
+Users.beforeCreate(setSaltAndPassword)
+Users.beforeUpdate(setSaltAndPassword)
+
+exports.module = Users.prototype.correctPassword = function(enteredPassword) {
+    return Users.encryptPassword(enteredPassword, this.salt()) === this.password()
+}
+
 Users.sync({ force: true }).then(() => {
 
     return Users.create({
       firstname: 'Marlow',
       lastname: 'Collins',
       username: 'MarlowC',
-      email: 'marlowcollins95@gmail.com',
-      password: 'password',
-      about: 'I am the founder of CalenTask',
+      email: 'test@gmail.com',
+      password: 'test',
+      about: 'I\'m working, hello world',
       lastLogin: Date(),
       status: 'active',
       role: 'admin'

@@ -5,20 +5,21 @@ const Users = require('../model/UsersModel')
 
 usersRouter.route('/')
 
-.get(passport.authenticate('local'),(req, res, next) => {
+.get((req, res, next) => {
     Users.findAll()
     .then(users => {
         console.log("All users:", JSON.stringify(users, null, 4));
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json')
         res.json(users)
-    })
-    .catch( err => next(err));
+    }).catch( err => next(err));
+
 })
 
 usersRouter.route('/signup')
 
 .post((req, res, next) => {
+    //console.log(req.session)
     Users.create({ 
         firstname: req.body.firstname, 
         lastname: req.body.lastname, 
@@ -38,8 +39,8 @@ usersRouter.route('/login')
 
 .post(passport.authenticate('local'),(req, res) => {
     res.statusCode = 200
-    res.setHeader('Content-Type','application/json')
-    res.end('You are logged in')
+    res.setHeader('Content-Type', 'application/json')
+    res.send(`Hello ${req.body.username}`)
 })
 
 usersRouter.route('/login/forgot')
@@ -59,15 +60,15 @@ usersRouter.route('/:userId')
 })
 
 //private username page
-/*
+
 usersRouter.route('/:userId/dashboard')
 
 .get((req, res, next) => {
     Users.findOne({where: req.body.username})
-    .then(username => {
+    .then(user => {
         res.statusCode = 200;
         const myUserId = req.params.userId
-        if(myUserId === username){
+        if(myUserId === user.body.username){
             res.send(`Hello ${myUserId.toUpperCase()} this is your Dashboard!`)
         } else {
             const err = new Error('This username doen\'t\ exist')
@@ -75,7 +76,7 @@ usersRouter.route('/:userId/dashboard')
             return next(err)
         }
     }) .catch(err => next(err))
-}) */
+}) 
 
 usersRouter.route('/:userId/settings')
 

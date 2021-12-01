@@ -47,7 +47,7 @@ const redis = new Redis()
 
 //Session
 app.use(session({
-    name: 'userAuthenticated',
+    name: 'sessionId',
     store: new RedisStore({ 
         client: redis,
         disableTouch: true
@@ -57,7 +57,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
+        httpOnly: false,
         maxAge: 1000 * 60 * 60 * 24 //one day
     }
 }))
