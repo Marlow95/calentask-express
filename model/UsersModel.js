@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/database')
-const crypto = require('crypto')
+const bcrypt = require('bcrypt')
 
 const Model = Sequelize.Model;
 class Users extends Model {}
@@ -46,14 +46,6 @@ Users.init({
         validate: {
             notNull: true,
             isAlphanumeric: true
-        }, get(){
-            return () => this.getDataValue('password')
-        }
-    },
-    salt: {
-        type: Sequelize.STRING,
-        get(){
-            return () => this.getDataValue('salt')
         }
     },
     about: {
@@ -70,34 +62,33 @@ Users.init({
     lastLogin: {
         type: Sequelize.DATE
     }
-}, { sequelize,
+}, { 
+    hooks:{
+        beforeCreate: async function(user) {
+            const salt = await bcrypt.genSalt(10); 
+            user.password = await bcrypt.hash(user.password, salt);
+        },
+        beforeUpdate:async (user) => {
+            if(user.password) {
+             const salt = await bcrypt.genSaltSync(10, 'a');
+             user.password = bcrypt.hashSync(user.password, salt);
+            }
+        }
+    },
+    instanceMethods:{
+        validPassword: async function(password) {
+            return await bcrypt.compare(password, this.password);
+        }
+    },
+    sequelize,
      modelName: 'Users',
      timestamps: true,
      createdAt: true,
      updatedAt: 'updateTimestamp'
 });
 
-
-Users.generateSalt = () => {
-    return crypto.randomBytes(16).toString('base64')
-}
-
-Users.encryptPassword = (plainText, salt) => {
-    return crypto.createHash('RSA-SHA256').update(plainText).update(salt).digest('hex')
-}
-
-const setSaltAndPassword = user => {
-    if (user.changed('password')) {
-        user.salt = Users.generateSalt()
-        user.password = Users.encryptPassword(user.password(), user.salt())
-    }
-}
-
-Users.beforeCreate(setSaltAndPassword)
-Users.beforeUpdate(setSaltAndPassword)
-
-exports.module = Users.prototype.correctPassword = function(enteredPassword) {
-    return Users.encryptPassword(enteredPassword, this.salt()) === this.password()
+Users.validPassword = async (password, hash) => {
+    return await bcrypt.compareSync(password, hash);
 }
 
 Users.sync({ force: true }).then(() => {
