@@ -38,7 +38,7 @@ usersRouter.route('/signup')
 usersRouter.route('/login')
 
 .post(passport.authenticate('local'),(req, res) => {
-    console.log(req.user)
+    console.log(req.body.password)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
     res.send(`Hello ${req.body.username}`)

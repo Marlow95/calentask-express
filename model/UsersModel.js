@@ -36,17 +36,17 @@ Users.init({
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-            isEmail: true
-        }
+        //validate: {
+            //isEmail: true
+        //}
     },
     password: {
         type: Sequelize.STRING,
         allowNull: false,
-        validate: {
-            notNull: true,
-            isAlphanumeric: true
-        }
+        //validate: {
+            //notNull: true,
+            //isAlphanumeric: true
+        //}
     },
     about: {
         type:Sequelize.TEXT
@@ -74,15 +74,6 @@ Users.init({
              users.password = bcrypt.hashSync(users.password, salt);
             }
         }
-    },
-    validate:{
-        validPassword: async function(password) {
-            try{
-            return bcrypt.compareSync(password, this.password);
-            } catch(err){
-                err.statusCode = 401
-            }
-        }
     },*/
     sequelize,
      modelName: 'Users',
@@ -91,6 +82,24 @@ Users.init({
      updatedAt: 'updateTimestamp'
 });
 
+
+
+/*
+function instance(){
+    const compare = Users.create({
+        firstname: '',
+        lastname: '',
+        email: '',
+        username: '',
+        password: '',
+        validPassword: function(newpass, password){
+            return bcrypt.compareSync(newpass, password);
+        }
+    })
+}
+
+console.log(compare instanceof Users)
+*/
 
 Users.sync({ force: true }).then(() => {
 

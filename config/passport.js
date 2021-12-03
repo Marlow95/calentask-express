@@ -1,6 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
-const bcrypt = require('bcrypt')
 const Users = require('../model/UsersModel')
 
 //passport config
@@ -20,16 +19,15 @@ passport.deserializeUser(function (id, done) {
     }).catch(err => done(err))
 })
 
-
 passport.use(new LocalStrategy(
     function(username, password, done) {
         Users.findOne({ where: { username: username, password: password } })
             .then(async users => {
-                if(!users) {
+               if(!users || !users.password) {
                     return done(null, false, { message: 'Incorrect Username' });
-                } else if(!users.password){
-                    return done(null, false, { message: 'Incorrect Password' });
                 } else{
+                    console.log('This is the users pass: ' + users.password)
+                    console.log('This is the password ' + password)
                     return done(null, users)
                 } 
             }).catch(err => done(err));
