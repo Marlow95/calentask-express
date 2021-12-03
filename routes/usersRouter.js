@@ -3,6 +3,7 @@ const passport = require('passport');
 const usersRouter = express.Router()
 const Users = require('../model/UsersModel')
 
+
 usersRouter.route('/')
 
 .get((req, res, next) => {
@@ -51,48 +52,41 @@ usersRouter.route('/login/forgot')
     res.send('You forgot your username/password')
 })
 
-//username page that everyone can see
-usersRouter.route('/:userId')
+usersRouter.route('/dashboard')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    const myUserId = req.params.userId
-    res.send(`Hello this is the page of ${myUserId.toUpperCase()}`)
-})
-
-//private username page
-
-usersRouter.route('/:userId/dashboard')
-
-.get((req, res, next) => {
-    Users.findOne({where: req.body.username})
-    .then(user => {
+.get(passport.authenticate('local'),(req, res) => {
+    Users.findOne({where:{username: username}})
+    if(!req.session){
+        err.statusCode = 401
+        res.send('You aren\'t logged in')
+    } else {
         res.statusCode = 200;
-        const myUserId = req.params.userId
-        if(myUserId === user.body.username){
-            res.send(`Hello ${myUserId.toUpperCase()} this is your Dashboard!`)
-        } else {
-            const err = new Error('This username doen\'t\ exist')
-            err.statusCode = 404
-            return next(err)
-        }
-    }) .catch(err => next(err))
+        res.send(`Hello ${req.body.username} this is your Dashboard!`)
+    }
 }) 
 
-usersRouter.route('/:userId/settings')
+usersRouter.route('/settings')
 
-.get((req, res) => {
+.get(passport.authenticate('local'),(req, res) => {
+    const user = Users.findOne({where:{username: username}})
     res.statusCode = 200;
-    const myUserId = req.params.userId
-    res.send(`Hello ${myUserId.toUpperCase()} these are your settings!`)
+    res.send(`Hello ${user} these are your settings!`)
 })
 
-usersRouter.route('/:userId/logout')
+usersRouter.route('/logout')
 
-.get((req, res) => {
-    res.statusCode = 200;
-    const myUserId = req.params.userId
-    res.send(`You have logged out successfully, ${myUserId.toUpperCase()}`)
+.get(passport.authenticate('local'),(req, res, next) => {
+    if(req.session){
+        res.statusCode = 200;
+        req.logout()
+        res.redirect('/')
+        res.send(`You have logged out successfully`)
+    } else{
+        const err = new Error('You are not logged in')
+        err.statusCode = 401
+        return next(err)
+    }
+    
 })
 
 module.exports = usersRouter

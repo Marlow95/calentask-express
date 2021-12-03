@@ -1,6 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
 const Users = require('../model/UsersModel')
+const bcrypt = require('bcrypt')
 
 //passport config
 
@@ -19,11 +20,31 @@ passport.deserializeUser(function (id, done) {
     }).catch(err => done(err))
 })
 
+/*
+const hashPassword = async (password, saltRounds = 10) => {
+    try {
+        // Generate a salt
+        const salt = await bcrypt.genSalt(saltRounds);
+
+        // Hash password
+        return await bcrypt.hash(password, salt);
+    } catch (error) {
+        console.log(error);
+    }
+
+    // Return null if error
+    return null;
+};*/
+
 passport.use(new LocalStrategy(
     function(username, password, done) {
         Users.findOne({ where: { username: username, password: password } })
             .then(async users => {
-               if(!users || !users.password) {
+                /*
+                let inputedPassHash = hashPassword(password)
+                const inputedPass = inputedPassHash.toString() */
+
+               if(!users || !users.password/*!users.validPassword(inputedPassHash, users.password)*/) {
                     return done(null, false, { message: 'Incorrect Username' });
                 } else{
                     console.log('This is the users pass: ' + users.password)

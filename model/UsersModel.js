@@ -62,6 +62,7 @@ Users.init({
     lastLogin: {
         type: Sequelize.DATE
     }
+
 }, {/*
     hooks:{
         beforeCreate: async function(users) {
@@ -74,6 +75,9 @@ Users.init({
              users.password = bcrypt.hashSync(users.password, salt);
             }
         }
+    },
+    validPassword: function(inputedPass, password){
+        return bcrypt.compareSync(inputedPass, password);
     },*/
     sequelize,
      modelName: 'Users',
@@ -82,24 +86,6 @@ Users.init({
      updatedAt: 'updateTimestamp'
 });
 
-
-
-/*
-function instance(){
-    const compare = Users.create({
-        firstname: '',
-        lastname: '',
-        email: '',
-        username: '',
-        password: '',
-        validPassword: function(newpass, password){
-            return bcrypt.compareSync(newpass, password);
-        }
-    })
-}
-
-console.log(compare instanceof Users)
-*/
 
 Users.sync({ force: true }).then(() => {
 
