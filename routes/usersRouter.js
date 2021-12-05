@@ -69,6 +69,12 @@ usersRouter.route('/settings')
     res.send(`Hello ${req.user.username} these are your settings!`)
 })
 
+.put(authenticate.verifyUser,(req,res) => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json')
+    Users.update()
+})
+
 usersRouter.route('/logout')
 
 .get(authenticate.verifyUser,(req, res) => {
