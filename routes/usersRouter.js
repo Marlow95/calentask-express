@@ -1,5 +1,6 @@
 const express = require('express');
-const passport = require('passport');
+//const passport = require('passport');
+const authenticate = require('../config/authenticate')
 const usersRouter = express.Router()
 const Users = require('../model/UsersModel')
 
@@ -38,11 +39,11 @@ usersRouter.route('/signup')
 
 usersRouter.route('/login')
 
-.post(passport.authenticate('local'),(req, res) => {
+.post(authenticate.verifyUser,(req, res) => {
     console.log(req.body.password)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
-    res.send(`Hello ${req.body.username}`)
+    res.send(`Hello ${req.user.username}`)
 })
 
 usersRouter.route('/login/forgot')
@@ -54,39 +55,28 @@ usersRouter.route('/login/forgot')
 
 usersRouter.route('/dashboard')
 
-.get(passport.authenticate('local'),(req, res) => {
-    Users.findOne({where:{username: username}})
-    if(!req.session){
-        err.statusCode = 401
-        res.send('You aren\'t logged in')
-    } else {
-        res.statusCode = 200;
-        res.send(`Hello ${req.body.username} this is your Dashboard!`)
-    }
+.get(authenticate.verifyUser,(req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json')
+    res.send(`Hello ${req.user.username} this is your Dashboard!`)
 }) 
 
 usersRouter.route('/settings')
 
-.get(passport.authenticate('local'),(req, res) => {
-    const user = Users.findOne({where:{username: username}})
+.get(authenticate.verifyUser,(req, res) => {
     res.statusCode = 200;
-    res.send(`Hello ${user} these are your settings!`)
+    res.setHeader('Content-Type', 'application/json')
+    res.send(`Hello ${req.user.username} these are your settings!`)
 })
 
 usersRouter.route('/logout')
 
-.get(passport.authenticate('local'),(req, res, next) => {
-    if(req.session){
-        res.statusCode = 200;
-        req.logout()
-        res.redirect('/')
-        res.send(`You have logged out successfully`)
-    } else{
-        const err = new Error('You are not logged in')
-        err.statusCode = 401
-        return next(err)
-    }
-    
+.get(authenticate.verifyUser,(req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json')
+    req.session.destroy()
+    res.clearCookie('sessionId')
+    res.redirect('/')
 })
 
 module.exports = usersRouter

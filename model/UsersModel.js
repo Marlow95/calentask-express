@@ -87,6 +87,10 @@ Users.init({
 });
 
 
+Users.validPassword =  async function(inputedPass, password){
+    return await bcrypt.compare(inputedPass, password);
+}
+
 Users.sync({ force: true }).then(() => {
 
     return Users.create({

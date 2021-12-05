@@ -55,4 +55,6 @@ passport.use(new LocalStrategy(
         }
     )
 );
+
+exports.verifyUser = passport.authenticate('local')
  
