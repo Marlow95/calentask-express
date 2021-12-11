@@ -20,35 +20,18 @@ passport.deserializeUser(function (id, done) {
     }).catch(err => done(err))
 })
 
-/*
-const hashPassword = async (password, saltRounds = 10) => {
-    try {
-        // Generate a salt
-        const salt = await bcrypt.genSalt(saltRounds);
-
-        // Hash password
-        return await bcrypt.hash(password, salt);
-    } catch (error) {
-        console.log(error);
-    }
-
-    // Return null if error
-    return null;
-};*/
-
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        Users.findOne({ where: { username: username, password: password } })
-            .then(async users => {
-                /*
-                let inputedPassHash = hashPassword(password)
-                const inputedPass = inputedPassHash.toString() */
-
-               if(!users || !users.password/*!users.validPassword(inputedPassHash, users.password)*/) {
+     
+        Users.findOne({ where: { username: username }})
+            .then(users => {
+    
+               if(!users || !bcrypt.compareSync(password, users.password)) {
                     return done(null, false, { message: 'Incorrect Username' });
                 } else{
                     console.log('This is the users pass: ' + users.password)
-                    console.log('This is the password ' + password)
+                    console.log(`This is the password ${password}`)
+                    
                     return done(null, users)
                 } 
             }).catch(err => done(err));
@@ -57,14 +40,15 @@ passport.use(new LocalStrategy(
 );
 
 exports.verifyUser = passport.authenticate('local')
- 
+
+ /*
 exports.verifyAdmin = (req, res, next) => {
     const admin = Users.findOne({where: {role: 'admin'}})
-    if(admin){
+    if(admin.role === admin){
         return next()
     } else{
         const err = new Error('You are\'nt authorized')
         err.statusCode = 403;
         return next(err)
     }
-}
+}*/

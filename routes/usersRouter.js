@@ -1,5 +1,4 @@
 const express = require('express');
-//const passport = require('passport');
 const authenticate = require('../config/authenticate')
 const usersRouter = express.Router()
 const Users = require('../model/UsersModel')
@@ -40,7 +39,6 @@ usersRouter.route('/signup')
 usersRouter.route('/login')
 
 .post(authenticate.verifyUser,(req, res) => {
-    console.log(req.body.password)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
     res.send(`Hello ${req.user.username}`)

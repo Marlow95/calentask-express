@@ -36,17 +36,17 @@ Users.init({
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
-        //validate: {
-            //isEmail: true
-        //}
+        validate: {
+            isEmail: true
+        }
     },
     password: {
         type: Sequelize.STRING,
         allowNull: false,
-        //validate: {
-            //notNull: true,
-            //isAlphanumeric: true
-        //}
+        validate: {
+            notNull: true,
+            isAlphanumeric: true
+        }
     },
     about: {
         type:Sequelize.TEXT
@@ -63,33 +63,23 @@ Users.init({
         type: Sequelize.DATE
     }
 
-}, {/*
+}, {
     hooks:{
-        beforeCreate: async function(users) {
-            const salt = await bcrypt.genSalt(10); 
-            users.password = await bcrypt.hash(users.password, salt);
-        },
-        beforeUpdate:async (users) => {
-            if(users.password) {
-             const salt = await bcrypt.genSaltSync(10, 'a');
-             users.password = bcrypt.hashSync(users.password, salt);
+        beforeCreate: async (users) => {
+            try{
+                const salt = await bcrypt.genSalt(10); 
+                users.password = await bcrypt.hash(users.password, salt);
+            } catch(err){
+                console.log(err)
             }
         }
     },
-    validPassword: function(inputedPass, password){
-        return bcrypt.compareSync(inputedPass, password);
-    },*/
     sequelize,
      modelName: 'Users',
      timestamps: true,
      createdAt: true,
      updatedAt: 'updateTimestamp'
 });
-
-
-Users.validPassword =  async function(inputedPass, password){
-    return await bcrypt.compare(inputedPass, password);
-}
 
 Users.sync({ force: true }).then(() => {
 
