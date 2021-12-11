@@ -72,6 +72,14 @@ Users.init({
             } catch(err){
                 console.log(err)
             }
+        },
+        beforeUpdate: async (users) => {
+            try{
+                const salt = await bcrypt.genSalt(10, 'a'); 
+                users.password = await bcrypt.hash(users.password, salt);
+            } catch(err){
+                console.log(err)
+            }
         }
     },
     sequelize,

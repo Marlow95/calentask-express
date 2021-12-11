@@ -41,14 +41,18 @@ passport.use(new LocalStrategy(
 
 exports.verifyUser = passport.authenticate('local')
 
- /*
+//not working
+/*
 exports.verifyAdmin = (req, res, next) => {
     const admin = Users.findOne({where: {role: 'admin'}})
-    if(admin.role === admin){
-        return next()
-    } else{
-        const err = new Error('You are\'nt authorized')
-        err.statusCode = 403;
-        return next(err)
-    }
+    .then(users => {
+        console.log(users)
+        if(users.role === admin){
+            return next()
+        } else{
+            const err = new Error('You are\'nt authorized')
+            err.statusCode = 403;
+            return next(err)
+        }
+    }).catch(err => next(err))
 }*/
