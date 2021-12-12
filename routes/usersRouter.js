@@ -44,43 +44,50 @@ usersRouter.route('/login')
     res.send(`Hello ${req.user.username}`)
 })
 
-usersRouter.route('/login/forgot')
-
+usersRouter.route('/logout')
 .get((req, res) => {
-    res.statusCode = 200;
-    res.send('You forgot your username/password')
+    if (req.session) {
+        req.session.destroy();
+        res.clearCookie('sessionId');
+        res.redirect('/api');
+    } else {
+        const err = new Error('You are not logged in!');
+        err.status = 401;
+        return next(err);
+    }
 })
 
-usersRouter.route('/dashboard')
-
-.get(authenticate.verifyUser,(req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json')
-    res.send(`Hello ${req.user.username} this is your Dashboard!`)
-}) 
-
-usersRouter.route('/settings')
-
-.get(authenticate.verifyUser,(req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json')
-    res.send(`Hello ${req.user.username} these are your settings!`)
+usersRouter.route('/:userId')
+.get(authenticate.verifyUser,(req, res, next) => {
+    Users.findOne({where: {username: req.params.userId}})
+    .then(user => {
+        if(!user){
+            res.send('The Username you provided doesn\'t exist')
+        } else{
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json')
+        res.send(`Hello ${user.firstname}, this is your Dashboard!`)}
+    }).catch( err => next(err));
 })
+
+
+//users can update info except user and pass
+usersRouter.route('/:userId/settings')
 
 .put(authenticate.verifyUser,(req,res) => {
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json')
-    Users.update()
-})
-
-usersRouter.route('/logout')
-
-.get(authenticate.verifyUser,(req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json')
-    req.session.destroy()
-    res.clearCookie('sessionId')
-    res.redirect('/')
+    Users.update({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    }, {where: {username: req.params.userId}})
+    .then(user => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json')
+        res.json(user)
+    })
+    .catch(err => next(err))
 })
 
 module.exports = usersRouter
