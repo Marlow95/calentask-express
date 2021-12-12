@@ -61,7 +61,7 @@ Users.init({
     },
     lastLogin: {
         type: Sequelize.DATE
-    }
+    },
 
 }, {
     hooks:{

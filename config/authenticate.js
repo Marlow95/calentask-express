@@ -2,6 +2,7 @@ const LocalStrategy = require('passport-local').Strategy
 const passport = require('passport')
 const Users = require('../model/UsersModel')
 const bcrypt = require('bcrypt')
+const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 
 //passport config
 
@@ -39,20 +40,19 @@ passport.use(new LocalStrategy(
     )
 );
 
-exports.verifyUser = passport.authenticate('local')
-
-//not working
+//google oauth
 /*
-exports.verifyAdmin = (req, res, next) => {
-    const admin = Users.findOne({where: {role: 'admin'}})
-    .then(users => {
-        console.log(users)
-        if(users.role === admin){
-            return next()
-        } else{
-            const err = new Error('You are\'nt authorized')
-            err.statusCode = 403;
-            return next(err)
-        }
-    }).catch(err => next(err))
-}*/
+passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://www.example.com/auth/google/callback",
+    passReqToCallback: true
+  },
+  function(request, accessToken, refreshToken, profile, done) {
+       Users.findOrCreate({where: { googleId: profile.id }}, function (err, user) {
+         return done(err, user);
+       });
+  }
+));*/
+
+exports.verifyUser = passport.authenticate('local')
