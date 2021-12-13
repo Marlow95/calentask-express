@@ -20,7 +20,6 @@ usersRouter.route('/')
 usersRouter.route('/signup')
 
 .post((req, res, next) => {
-    console.log(req.user)
     Users.create({ 
         firstname: req.body.firstname, 
         lastname: req.body.lastname, 
@@ -45,6 +44,7 @@ usersRouter.route('/login')
 })
 
 usersRouter.route('/logout')
+
 .get((req, res) => {
     if (req.session) {
         req.session.destroy();
@@ -58,6 +58,7 @@ usersRouter.route('/logout')
 })
 
 usersRouter.route('/:userId')
+
 .get(authenticate.verifyUser,(req, res, next) => {
     Users.findOne({where: {username: req.params.userId}})
     .then(user => {
