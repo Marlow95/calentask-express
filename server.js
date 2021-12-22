@@ -9,15 +9,16 @@ const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const cors = require('cors')
 const bcrypt= require('bcrypt')
+const multer = require('multer')
 const authenticate = require('./config/authenticate')
 const createError = require('http-errors')
 const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
 const todoRouter = require('./routes/todoRouter')
+const uploadRouter = require('./routes/uploadRouter');
 
 //Database
 const sequelize = require('./config/database');
-
 
 // Test Database
 sequelize.authenticate()
@@ -71,6 +72,7 @@ app.use(passport.session())
 app.use('/api', indexRouter)
 app.use('/users', usersRouter)
 app.use('/todo', todoRouter)
+app.use('/imageUpload', uploadRouter)
 
 
 // catch 404 and forward to error handler

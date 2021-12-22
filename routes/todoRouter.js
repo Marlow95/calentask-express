@@ -24,8 +24,7 @@ todoRouter.route('/')
         res.statusCode = 201;
         res.setHeader('Content-Type', 'application/json')
         res.json(todo)
-    })
-    .catch(err => next(err))
+    }).catch(err => next(err))
 })
 
 .put((req, res) => {
