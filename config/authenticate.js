@@ -3,6 +3,7 @@ const passport = require('passport')
 const Users = require('../model/UsersModel')
 const bcrypt = require('bcrypt')
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+const config = require('../config')
 
 //passport config
 
@@ -41,11 +42,11 @@ passport.use(new LocalStrategy(
 );
 
 //google oauth
-/*
+
 passport.use(new GoogleStrategy({
-    clientID: GOOGLE_CLIENT_ID,
-    clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://www.example.com/auth/google/callback",
+    clientID: config.google.clientId,
+    clientSecret: config.google.clientSecret,
+    callbackURL: "http://localhost:4000/users/auth/google",
     passReqToCallback: true
   },
   function(request, accessToken, refreshToken, profile, done) {
@@ -53,6 +54,6 @@ passport.use(new GoogleStrategy({
          return done(err, user);
        });
   }
-));*/
+));
 
 exports.verifyUser = passport.authenticate('local')
