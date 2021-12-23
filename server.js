@@ -16,6 +16,7 @@ const indexRouter = require('./routes/indexRouter')
 const usersRouter = require('./routes/usersRouter');
 const todoRouter = require('./routes/todoRouter')
 const uploadRouter = require('./routes/uploadRouter');
+const config = require('./config')
 
 //Database
 const sequelize = require('./config/database');
@@ -54,7 +55,7 @@ app.use(session({
         client: redis,
         disableTouch: true
     }),
-    secret:'hnBrd4GNsdBd4BF4CKWS35dk6f',
+    secret: config.secret,
     resave: false,
     saveUninitialized: false,
     cookie: {

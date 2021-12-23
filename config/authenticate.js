@@ -28,7 +28,7 @@ passport.use(new LocalStrategy(
             .then(users => {
     
                if(!users || !bcrypt.compareSync(password, users.password)) {
-                    return done(null, false, { message: 'Incorrect Username' });
+                    return done(null, false, { message: 'Incorrect Username or password' });
                 } else{
                     console.log('This is the users pass: ' + users.password)
                     console.log(`This is the password ${password}`)

@@ -5,7 +5,7 @@ indexRouter.route('/')
 
 .get((req, res) => {
     res.statusCode = 200;
-    res.send('Hello this is CalenTask')
+    res.json('Hello this is CalenTask')
 })
 
 module.exports = indexRouter;

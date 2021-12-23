@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const authenticate = require('../config/authenticate')
 const usersRouter = express.Router()
 const Users = require('../model/UsersModel')
@@ -37,10 +38,10 @@ usersRouter.route('/signup')
 
 usersRouter.route('/login')
 
-.post(authenticate.verifyUser,(req, res) => {
+.post(passport.authenticate('local', { failureRedirect: '/api', failureMessage: true }),(req, res) => {
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
-    res.send(`Hello ${req.user.username}`)
+    res.json({message: `Hello ${req.user.username}`, isSuccess: true })
 })
 
 usersRouter.route('/logout')
@@ -49,7 +50,7 @@ usersRouter.route('/logout')
     if (req.session) {
         req.session.destroy();
         res.clearCookie('sessionId');
-        res.redirect('/api');
+        res.json('You are logged out');
     } else {
         const err = new Error('You are not logged in!');
         err.status = 401;
