@@ -92,11 +92,4 @@ usersRouter.route('/:userId/settings')
     .catch(err => next(err))
 })
 
-usersRouter.route('/auth/google')
-.get(passport.authenticate('google', { scope: ['email', 'profile'] }), (req, res, next) => {
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json')
-    res.json({message: 'You are logged in with google', isSuccess: true })
-})
-
 module.exports = usersRouter

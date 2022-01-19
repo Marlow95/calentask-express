@@ -71,9 +71,9 @@ app.use(passport.session())
 
 //Routes
 app.use('/api', indexRouter)
-app.use('/users', usersRouter)
-app.use('/todo', todoRouter)
-app.use('/imageUpload', uploadRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/todo', todoRouter)
+app.use('/api/imageUpload', uploadRouter)
 
 
 // catch 404 and forward to error handler
